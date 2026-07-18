@@ -3,6 +3,7 @@ import { StarsField } from '../StarsField.jsx';
 import { chapter3Sfx, stopAllChapterAudio } from '../../audio/presets.js';
 import { DIFFICULTY_DEFS, COLORS, CHAPTER_META } from '../../constants.js';
 import { chapter3Config } from '../../data/chapter3Config.js';
+import { RuleModal } from '../RuleModal.jsx';
 
 /* ============== 工具函数 ============== */
 function pickRandom(arr) {
@@ -388,6 +389,8 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
   const [progress, setProgress] = useState(0); // 信息显示进度 0-1
   const [completed, setCompleted] = useState(false);
   const [showCriteria, setShowCriteria] = useState(true); // 阶段开始展示 3 个判断标准
+  const [showPausedCriteria, setShowPausedCriteria] = useState(false); // 游戏中空格键暂停
+  const [showHelp, setShowHelp] = useState(false);
 
   const spawnTimerRef = useRef(null);
   const deadlineTimerRef = useRef(null);
@@ -395,6 +398,7 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
   const lastFrameRef = useRef(performance.now());
   const ambientStopRef = useRef(null);
   const completedRef = useRef(false);
+  const pausedRef = useRef(false);
 
   // 启动环境音
   useEffect(() => {
@@ -521,7 +525,7 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
     moveToNext();
   }
 
-  // 键盘快捷键：showCriteria 时只听空格；游戏进行时听 Q / P
+  // 键盘快捷键：showCriteria 时只听空格；游戏进行时听 Q / P / Space(暂停)
   useEffect(() => {
     function onKey(e) {
       if (completed) return;
@@ -531,6 +535,19 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
         if (k === ' ' || k === 'space' || e.code === 'Space') {
           e.preventDefault();
           setShowCriteria(false);
+        }
+        return;
+      }
+      // 游戏中：空格暂停显示 3 个判断标准
+      if (k === ' ' || k === 'space' || e.code === 'Space') {
+        if (currentInfo && !pausedRef.current) {
+          e.preventDefault();
+          pausedRef.current = true;
+          setShowPausedCriteria(true);
+          setTimeout(() => {
+            setShowPausedCriteria(false);
+            pausedRef.current = false;
+          }, 1800);
         }
         return;
       }
@@ -647,7 +664,11 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
         <div className="ch3-errors">
           失 误: <span className={errCount >= 1 ? 'err' : 'ok'}>{errCount}</span> / 2
         </div>
+        <button className="ch3-help" onClick={() => setShowHelp(true)} aria-label="规则说明">?</button>
       </div>
+
+      {/* 规则弹窗 */}
+      {showHelp && <RuleModal chapter="3" onClose={() => setShowHelp(false)} />}
 
       {/* 信息流显示区 */}
       <div className="ch3-info-center">
@@ -671,6 +692,26 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
           </div>
         )}
       </div>
+
+      {/* 暂停显示 3 个判断标准（空格触发，1.8s 后自动关闭） */}
+      {showPausedCriteria && (
+        <div className="ch3-paused-overlay">
+          <div className="ch3-paused-title">当 前 判 断 标 准</div>
+          <div className="ch3-paused-criteria">
+            {criteria.map((c, i) => (
+              <div key={c.key} className="ch3-paused-criterion">
+                <span className="ch3-paused-num">{['一', '二', '三'][i]}</span>
+                <span className="ch3-paused-text">{c.title}</span>
+                <span className="ch3-paused-rule">
+                  <span className="ch3-paused-threat">真 ＝ {describeThreat(c)}</span>
+                  <span className="ch3-paused-fake">假 ＝ {describeFake(c)}</span>
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="ch3-paused-hint">空 格 · 1.8 秒 后 自 动 关 闭</div>
+        </div>
+      )}
 
       {/* 控制区 */}
       <div className="ch3-controls">
@@ -1104,5 +1145,104 @@ const ch3MainStyles = `
   font-size: 10px;
   letter-spacing: 0.3em;
   color: var(--shadow, #555);
+}
+
+/* ===== 空格键暂停显示判断标准 ===== */
+.ch3-paused-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 6, 10, 0.85);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: ch3-paused-in 0.2s ease;
+}
+@keyframes ch3-paused-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ch3-paused-title {
+  font-family: 'Cormorant Garamond', 'Songti SC', serif;
+  font-size: 18px;
+  letter-spacing: 0.4em;
+  color: var(--cyan-signal, #7fd4e8);
+  margin-bottom: 24px;
+}
+
+.ch3-paused-criteria {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+
+.ch3-paused-criterion {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 24px;
+  border: 1px solid var(--rust-warn, #d9455f);
+  background: rgba(10, 13, 20, 0.6);
+  min-width: 480px;
+}
+
+.ch3-paused-num {
+  font-size: 11px;
+  color: var(--rust-warn, #d9455f);
+  letter-spacing: 0.2em;
+}
+.ch3-paused-text {
+  font-size: 14px;
+  letter-spacing: 0.3em;
+  color: var(--bone, #e8e6df);
+}
+.ch3-paused-rule {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.ch3-paused-threat {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--rust-warn, #d9455f);
+}
+.ch3-paused-fake {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--cyan-signal, #7fd4e8);
+}
+
+.ch3-paused-hint {
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--shadow, #555);
+}
+
+.ch3-help {
+  position: absolute;
+  top: 40px;
+  right: 30px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--cyan-fade, #2a5d6a);
+  background: transparent;
+  color: var(--cyan-fade, #2a5d6a);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 11;
+  transition: all 0.2s ease;
+}
+.ch3-help:hover {
+  border-color: var(--cyan-signal, #7fd4e8);
+  color: var(--cyan-signal, #7fd4e8);
+  background: rgba(127, 212, 232, 0.1);
 }
 `;

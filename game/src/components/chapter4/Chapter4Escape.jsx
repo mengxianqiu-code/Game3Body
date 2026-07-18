@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StarsField } from '../StarsField.jsx';
+import { RuleModal } from '../RuleModal.jsx';
 import { chapter4Sfx } from '../../audio/presets.js';
 import { DIFFICULTY_DEFS, COLORS, CHAPTER_META } from '../../constants.js';
 
@@ -61,6 +62,8 @@ export function Chapter4Escape({ difficulty = 'normal', onComplete }) {
   const [slowMo, setSlowMo] = useState(false);
   const [completed, setCompleted] = useState(false);
   const [activationOrder, setActivationOrder] = useState([]);
+  const [showHelp, setShowHelp] = useState(false);
+  const [victoryText, setVictoryText] = useState(''); // 胜利文字逐字浮现
 
   const startRef = useRef(performance.now());
   const animFrameRef = useRef(null);
@@ -144,14 +147,31 @@ export function Chapter4Escape({ difficulty = 'normal', onComplete }) {
         if (collapseStopRef.current) collapseStopRef.current();
         chapter4Sfx.stopCollapseHum();
         chapter4Sfx.warp();
+        // 胜利文字逐字浮现
+        const lines = [
+          '曲 率 引 擎 启 动 ……',
+          '星 环 号 进 入 光 速 ……',
+          '二维化的太阳系在身后归于沉寂。',
+          '你携带着四段记忆——',
+          '它们将是你在新维度里唯一的方向。',
+        ];
+        let acc = '';
+        let idx = 0;
+        const iv = setInterval(() => {
+          if (idx >= lines.length) { clearInterval(iv); return; }
+          acc += (acc ? '\n' : '') + lines[idx];
+          setVictoryText(acc);
+          idx++;
+        }, 900);
         const score = {
           timeUsed: Math.floor((performance.now() - startRef.current) / 1000),
           fragmentsCollected: newOrder.length,
           order: newOrder,
         };
+        // 文字全部浮现 + 3 秒停留后回调
         setTimeout(() => {
           onComplete && onComplete(score);
-        }, 2000);
+        }, lines.length * 900 + 3000);
       }
     } else {
       // 时机错误
@@ -167,6 +187,8 @@ export function Chapter4Escape({ difficulty = 'normal', onComplete }) {
   return (
     <div className="scene active ch4-scene" id="chapter4">
       <StarsField />
+
+      {showHelp && <RuleModal chapter="4" onClose={() => setShowHelp(false)} />}
 
       {/* 二维化容器（scaleY 压扁） */}
       <div
@@ -270,8 +292,18 @@ export function Chapter4Escape({ difficulty = 'normal', onComplete }) {
         <div className="ch4-status">
           已 激 活 · {activationOrder.length} / {ringCount}
         </div>
+        <button className="ch4-help" onClick={() => setShowHelp(true)} aria-label="规则说明">?</button>
         {slowMo && <div className="ch4-slowmo">慢 动 作 · 抢 救 模 式</div>}
       </div>
+
+      {/* 胜利文字逐字浮现 */}
+      {completed && victoryText && (
+        <div className="ch4-victory-text">
+          {victoryText.split('\n').map((line, i) => (
+            <div key={i} className="ch4-victory-line">{line}</div>
+          ))}
+        </div>
+      )}
 
       <style>{chapter4Styles}</style>
     </div>
@@ -387,5 +419,70 @@ const chapter4Styles = `
 
 .ch4-ring.activated circle {
   cursor: default;
+}
+
+.ch4-help {
+  position: absolute;
+  top: 40px;
+  right: 30px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--cyan-fade, #2a5d6a);
+  background: transparent;
+  color: var(--cyan-fade, #2a5d6a);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 11;
+  transition: all 0.2s ease;
+}
+.ch4-help:hover {
+  border-color: var(--cyan-signal, #7fd4e8);
+  color: var(--cyan-signal, #7fd4e8);
+  background: rgba(127, 212, 232, 0.1);
+}
+
+.ch4-victory-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 20;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.85) 80%);
+  animation: ch4-victory-bg-in 1.2s ease;
+}
+
+@keyframes ch4-victory-bg-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ch4-victory-line {
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', serif;
+  font-size: 22px;
+  letter-spacing: 0.35em;
+  line-height: 2;
+  color: var(--cyan-signal, #7fd4e8);
+  text-shadow: 0 0 16px rgba(127, 212, 232, 0.65);
+  opacity: 0;
+  animation: ch4-victory-line-in 1s ease forwards;
+}
+
+.ch4-victory-line:nth-child(1) { animation-delay: 0s; }
+.ch4-victory-line:nth-child(2) { animation-delay: 0.4s; }
+.ch4-victory-line:nth-child(3) { animation-delay: 0.8s; }
+.ch4-victory-line:nth-child(4) { animation-delay: 1.2s; }
+.ch4-victory-line:nth-child(5) { animation-delay: 1.6s; }
+
+@keyframes ch4-victory-line-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 `;

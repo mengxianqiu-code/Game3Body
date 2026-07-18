@@ -3,7 +3,16 @@ import { DIFFICULTY, DIFFICULTY_DEFS, CHAPTER_META } from '../constants.js';
 
 const DIFFICULTY_LIST = [DIFFICULTY.EASY, DIFFICULTY.NORMAL, DIFFICULTY.HARD];
 
-export function MainMenu({ onStart, difficulty = 'normal', onDifficultyChange }) {
+export function MainMenu({
+  onStart,
+  difficulty = 'normal',
+  onDifficultyChange,
+  bestScore,
+  etoCount = 0,
+  onOpenSettings,
+  onOpenHelp,
+  onOpenCredits,
+}) {
   const titleChars = ['星', '际', '逃', '亡'];
 
   return (
@@ -15,6 +24,19 @@ export function MainMenu({ onStart, difficulty = 'normal', onDifficultyChange })
         ))}
       </div>
       <div className="subtitle">THREE-BODY · STARSEA</div>
+
+      {/* 最高分 + ETO 进度 */}
+      <div className="menu-stats">
+        <div className="menu-stat">
+          <span className="menu-stat-label">最 高 威 慑 度</span>
+          <span className="menu-stat-value">{bestScore ?? '—'}</span>
+        </div>
+        <div className="menu-stat-divider" />
+        <div className="menu-stat">
+          <span className="menu-stat-label">ETO 线 索</span>
+          <span className="menu-stat-value">{etoCount} / 4</span>
+        </div>
+      </div>
 
       {/* 章节预览 */}
       <div className="menu-chapters">
@@ -52,6 +74,22 @@ export function MainMenu({ onStart, difficulty = 'normal', onDifficultyChange })
         开 始
       </button>
 
+      {/* 局外导航 */}
+      <div className="menu-nav">
+        <button className="menu-nav-btn" onClick={onOpenHelp} type="button">
+          <span className="menu-nav-icon">?</span>
+          <span className="menu-nav-label">规 则</span>
+        </button>
+        <button className="menu-nav-btn" onClick={onOpenSettings} type="button">
+          <span className="menu-nav-icon">⚙</span>
+          <span className="menu-nav-label">设 置</span>
+        </button>
+        <button className="menu-nav-btn" onClick={onOpenCredits} type="button">
+          <span className="menu-nav-icon">☆</span>
+          <span className="menu-nav-label">名 单</span>
+        </button>
+      </div>
+
       <div className="footer-hint">CLICK · TOUCH · M 键 静 音</div>
 
       <style>{menuStyles}</style>
@@ -75,7 +113,7 @@ const menuStyles = `
   display: flex;
   gap: 12px;
   margin-bottom: 8px;
-  font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', serif;
   font-size: 32px;
   letter-spacing: 0.5em;
   color: var(--bone, #e8e6df);
@@ -101,13 +139,44 @@ const menuStyles = `
   font-size: 10px;
   letter-spacing: 0.4em;
   color: var(--cyan-fade, #2a5d6a);
-  margin-bottom: 32px;
+  margin-bottom: 24px;
+}
+
+.menu-stats {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 8px 24px;
+  border: 1px solid var(--dim, #2a2f3a);
+  font-family: 'JetBrains Mono', monospace;
+}
+.menu-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.menu-stat-label {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--cyan-fade, #2a5d6a);
+}
+.menu-stat-value {
+  font-size: 13px;
+  letter-spacing: 0.15em;
+  color: var(--bone, #e8e6df);
+  font-weight: bold;
+}
+.menu-stat-divider {
+  width: 1px;
+  height: 14px;
+  background: var(--dim, #2a2f3a);
 }
 
 .menu-chapters {
   display: flex;
   gap: 24px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.2em;
@@ -145,7 +214,7 @@ const menuStyles = `
   flex-direction: column;
   align-items: center;
   gap: 10px;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .menu-difficulty-label {
@@ -232,6 +301,47 @@ const menuStyles = `
 .start-wrap:hover::after {
   width: 14px;
   height: 14px;
+}
+
+.menu-nav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.menu-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: 1px solid var(--dim, #2a2f3a);
+  padding: 10px 18px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  outline: none;
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 70px;
+}
+
+.menu-nav-btn:hover {
+  border-color: var(--cyan-fade, #2a5d6a);
+}
+
+.menu-nav-icon {
+  font-size: 14px;
+  color: var(--cyan-fade, #2a5d6a);
+}
+
+.menu-nav-label {
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--shadow, #555);
+}
+
+.menu-nav-btn:hover .menu-nav-icon,
+.menu-nav-btn:hover .menu-nav-label {
+  color: var(--cyan-signal, #7fd4e8);
 }
 
 .footer-hint {

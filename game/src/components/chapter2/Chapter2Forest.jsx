@@ -3,6 +3,7 @@ import { StarsField } from '../StarsField.jsx';
 import { chapter2Sfx, stopAllChapterAudio } from '../../audio/presets.js';
 import { DIFFICULTY_DEFS, COLORS, CHAPTER_META } from '../../constants.js';
 import { chapter2Config } from '../../data/chapter2Config.js';
+import { RuleModal } from '../RuleModal.jsx';
 
 const { viewBox, shipStart, escapePoint, gravityBodies, gravityInfluenceRadius } = chapter2Config;
 
@@ -120,6 +121,7 @@ export function Chapter2Forest({ difficulty = 'normal', onComplete }) {
   const [completed, setCompleted] = useState(false);
   const [flashRed, setFlashRed] = useState(0);
   const [, setTick] = useState(0); // 触发重渲染
+  const [showHelp, setShowHelp] = useState(false);
 
   const animFrameRef = useRef(null);
   const lastFrameRef = useRef(performance.now());
@@ -351,9 +353,11 @@ export function Chapter2Forest({ difficulty = 'normal', onComplete }) {
           ))}
           <span className="ch2-warn-label">容 错</span>
         </div>
+        <button className="ch2-help" onClick={() => setShowHelp(true)} aria-label="规则说明">?</button>
       </div>
 
       {/* 星图（纯展示，无点击响应） */}
+      {showHelp && <RuleModal chapter="2" onClose={() => setShowHelp(false)} />}
       <div className="ch2-starmap-wrap">
         <svg
           className="ch2-starmap"
@@ -672,5 +676,28 @@ const chapter2Styles = `
 @keyframes ch2-scan-pulse {
   from { opacity: 0.6; }
   to { opacity: 1; }
+}
+
+.ch2-help {
+  position: absolute;
+  top: 40px;
+  right: 30px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--cyan-fade, #2a5d6a);
+  background: transparent;
+  color: var(--cyan-fade, #2a5d6a);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 11;
+  transition: all 0.2s ease;
+}
+.ch2-help:hover {
+  border-color: var(--cyan-signal, #7fd4e8);
+  color: var(--cyan-signal, #7fd4e8);
+  background: rgba(127, 212, 232, 0.1);
 }
 `;

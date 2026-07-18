@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StarsField } from '../StarsField.jsx';
+import { RuleModal } from '../RuleModal.jsx';
 import { chapter1Sfx } from '../../audio/presets.js';
 import { CHAPTER1_GRID, DIFFICULTY_DEFS, COLORS, CHAPTER_META } from '../../constants.js';
 
@@ -164,6 +165,7 @@ export function Chapter1Signal({ difficulty = 'normal', onComplete }) {
   const [toast, setToast] = useState('');
   const [currentDistance, setCurrentDistance] = useState(null); // 最近一次点击距信号源的曼哈顿距离
   const [completed, setCompleted] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
 
   const startRef = useRef(performance.now());
   const scanLoopStopRef = useRef(null);
@@ -288,7 +290,10 @@ export function Chapter1Signal({ difficulty = 'normal', onComplete }) {
           ))}
           <span className="ch1-lives-label">容 错</span>
         </div>
+        <button className="ch1-help" onClick={() => setShowHelp(true)} aria-label="规则说明">?</button>
       </div>
+
+      {showHelp && <RuleModal chapter="1" onClose={() => setShowHelp(false)} />}
 
       <div className="ch1-lede">
         听 声 找 信 号 · 数字 = 相 邻 雷 数
@@ -586,5 +591,28 @@ const chapterStyles = `
 @keyframes ch1-distance-in {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+.ch1-help {
+  position: absolute;
+  top: 40px;
+  right: 30px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--cyan-fade, #2a5d6a);
+  background: transparent;
+  color: var(--cyan-fade, #2a5d6a);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 11;
+  transition: all 0.2s ease;
+}
+.ch1-help:hover {
+  border-color: var(--cyan-signal, #7fd4e8);
+  color: var(--cyan-signal, #7fd4e8);
+  background: rgba(127, 212, 232, 0.1);
 }
 `;
