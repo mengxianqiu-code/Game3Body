@@ -1,0 +1,223 @@
+/* ==================== 移动端适配 ==================== */
+
+/* 全局：禁用双击缩放与手势缩放（保证点击即触发） */
+* {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* SVG 元素防止默认手势（双击缩放等） */
+svg {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* 安全区：底部按钮/提示要避开 Home Indicator */
+#ending .restart-wrap {
+  bottom: max(60px, env(safe-area-inset-bottom, 0px) + 24px);
+}
+
+#chapter1 .energy-bar {
+  bottom: max(40px, env(safe-area-inset-bottom, 0px) + 16px);
+}
+
+#chapter3 .collapse-bar {
+  top: max(32px, env(safe-area-inset-top, 0px) + 16px);
+}
+#chapter3 .fragment-count {
+  top: max(32px, env(safe-area-inset-top, 0px) + 16px);
+}
+
+#menu .footer-hint {
+  bottom: max(32px, env(safe-area-inset-bottom, 0px) + 12px);
+}
+
+/* ==================== 小屏（< 600px） ==================== */
+
+@media (max-width: 600px) {
+  /* 主菜单字号 */
+  #menu .title {
+    font-size: clamp(28px, 9vw, 48px);
+    letter-spacing: 0.6em;
+    text-indent: 0.6em;
+  }
+  #menu .subtitle {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+  }
+  #menu .start-wrap {
+    margin-top: 48px;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+  }
+
+  /* 第一章：把能量条移到上方，腾出底部空间 */
+  #chapter1 {
+    justify-content: flex-start;
+    padding-top: max(24px, env(safe-area-inset-top, 0px));
+  }
+  #chapter1 .lede {
+    font-size: 12px;
+    margin-bottom: 32px;
+    padding: 0 16px;
+  }
+  #chapter1 .arc-wrap {
+    height: 130px;
+  }
+  #chapter1 .waveform {
+    height: 60px;
+    margin-top: 32px;
+  }
+  #chapter1 .energy-bar {
+    position: relative;
+    bottom: auto;
+    margin-top: 24px;
+    opacity: 0.45;
+  }
+
+  /* 第二章：星图自适应，控制项居中放底部 */
+  #chapter2 .starmap {
+    width: 95vw;
+    height: 55vh;
+  }
+  #chapter2 .controls {
+    top: auto;
+    bottom: max(24px, env(safe-area-inset-bottom, 0px) + 12px);
+    right: 50%;
+    transform: translateX(50%);
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+  }
+  #chapter2 .detect-btn {
+    min-width: 100px;
+  }
+  #chapter2 .lede {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  #chapter2 .swing-bubble {
+    font-size: 11px;
+  }
+
+  /* 第三章：太阳能场压扁适应竖屏 */
+  #chapter3 .solar-field {
+    width: 95vw;
+    height: 60vh;
+  }
+  #chapter3 .lede {
+    font-size: 12px;
+    margin-bottom: 12px;
+  }
+  #chapter3 .collapse-bar {
+    width: 140px;
+  }
+  #chapter3 .collapse-bar .label,
+  #chapter3 .fragment-count {
+    font-size: 10px;
+  }
+  /* 碎片在小屏略放大 */
+  #chapter3 .fragment .core {
+    r: 6;
+  }
+  #chapter3 .fragment .halo {
+    r: 16;
+  }
+
+  /* 结局 */
+  #ending .quote {
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    padding: 0 20px;
+  }
+  #ending .score-badge {
+    margin-top: 32px;
+  }
+  #ending .score-row {
+    font-size: 10px;
+    gap: 16px;
+  }
+}
+
+/* ==================== 极小屏（< 380px） ==================== */
+
+@media (max-width: 380px) {
+  #menu .title {
+    font-size: 24px;
+    letter-spacing: 0.5em;
+    text-indent: 0.5em;
+  }
+  #chapter1 .arc-wrap {
+    height: 110px;
+  }
+  #chapter1 .waveform {
+    height: 50px;
+  }
+  #chapter2 .starmap {
+    height: 50vh;
+  }
+  #chapter3 .solar-field {
+    height: 55vh;
+  }
+}
+
+/* ==================== 移动端横屏 ==================== */
+
+@media (max-height: 500px) and (orientation: landscape) {
+  /* 横屏：紧凑布局 */
+  #menu .title {
+    font-size: clamp(24px, 5vh, 40px);
+  }
+  #menu .start-wrap {
+    margin-top: 24px;
+  }
+  #chapter1 .lede {
+    margin-bottom: 16px;
+    font-size: 11px;
+  }
+  #chapter1 .arc-wrap {
+    height: 90px;
+  }
+  #chapter1 .waveform {
+    height: 40px;
+    margin-top: 16px;
+  }
+  #chapter1 .energy-bar {
+    position: relative;
+    bottom: auto;
+    margin-top: 12px;
+  }
+  #chapter2 .starmap {
+    height: 75vh;
+  }
+  #chapter2 .controls {
+    top: 12px;
+    right: 12px;
+    bottom: auto;
+    flex-direction: column;
+    transform: none;
+  }
+  #chapter3 .solar-field {
+    height: 70vh;
+  }
+  #chapter3 .lede {
+    margin-bottom: 8px;
+  }
+}
+
+/* ==================== 性能：transform 提示 ==================== */
+
+#chapter2 .ship,
+#chapter3 .solar-field,
+#chapter1 .tick-dot {
+  will-change: transform;
+}
+
+/* 减少重绘：动画元素独立合成层 */
+#chapter1 .toast,
+#chapter2 .warning-flash,
+#chapter2 .scan-ring,
+#chapter3 .fragment .halo {
+  will-change: transform, opacity;
+}

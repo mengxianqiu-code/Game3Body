@@ -1,0 +1,745 @@
+/* ====== 主菜单 ====== */
+#menu .title {
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: clamp(36px, 7vw, 72px);
+  letter-spacing: 0.8em;
+  color: var(--bone);
+  text-indent: 0.8em;
+}
+#menu .subtitle {
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: clamp(11px, 1.2vw, 14px);
+  letter-spacing: 0.45em;
+  color: var(--cyan-fade);
+  margin-top: 14px;
+  text-transform: uppercase;
+}
+#menu .start-wrap {
+  margin-top: 64px;
+  color: var(--cyan-signal);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 15px;
+  letter-spacing: 0.3em;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 24px;
+  min-width: 200px;
+  min-height: 44px;
+  justify-content: center;
+  transition: opacity 240ms var(--ease-soft);
+}
+#menu .start-wrap::before,
+#menu .start-wrap::after {
+  content: '';
+  display: block;
+  width: 18px;
+  height: 1px;
+  background: var(--cyan-signal);
+  transition: width 240ms var(--ease-soft);
+}
+#menu .start-wrap:hover::before,
+#menu .start-wrap:focus::before,
+#menu .start-wrap:hover::after,
+#menu .start-wrap:focus::after {
+  width: 26px;
+}
+#menu .footer-hint {
+  position: absolute;
+  bottom: 32px;
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: var(--shadow);
+  text-transform: uppercase;
+}
+#menu .title-char {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: charIn 600ms var(--ease-soft) forwards;
+}
+#menu .title-char:nth-child(1) { animation-delay: 0.2s; }
+#menu .title-char:nth-child(2) { animation-delay: 0.26s; }
+#menu .title-char:nth-child(3) { animation-delay: 0.32s; }
+#menu .title-char:nth-child(4) { animation-delay: 0.38s; }
+#menu .title-char:nth-child(5) { animation-delay: 0.44s; }
+@keyframes charIn {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ====== 章节通用 ====== */
+.scene .lede {
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: clamp(12px, 1.4vw, 15px);
+  letter-spacing: 0.25em;
+  color: var(--bone);
+  opacity: 0.7;
+  margin-bottom: 56px;
+  text-align: center;
+}
+
+/* ====== 转场 ====== */
+#transition .quote {
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: clamp(14px, 1.6vw, 18px);
+  letter-spacing: 0.35em;
+  color: var(--bone);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1400ms ease, transform 1400ms ease;
+  text-align: center;
+  padding: 0 24px;
+}
+#transition .quote.in {
+  opacity: 0.85;
+  transform: translateY(0);
+}
+
+/* ====== 第一章 ====== */
+#chapter1 {
+  padding: 0 24px;
+}
+#chapter1 .arc-wrap {
+  position: relative;
+  width: min(720px, 92vw);
+  height: 160px;
+  margin: 0 auto;
+}
+#chapter1 .arc-wrap svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+#chapter1 .tick-hit {
+  position: absolute;
+  width: 44px;
+  height: 44px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+#chapter1 .tick-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  border: 0.5px solid var(--cyan-fade);
+  background: transparent;
+  transition: transform 180ms var(--ease-soft), background 200ms var(--ease-soft), border-color 200ms var(--ease-soft);
+}
+#chapter1 .tick-hit:hover .tick-dot,
+#chapter1 .tick-hit:focus-visible .tick-dot {
+  background: var(--cyan-signal);
+  border-color: var(--cyan-signal);
+  transform: scale(1.4);
+}
+#chapter1 .toast {
+  position: absolute;
+  top: -46px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--cyan-signal);
+  opacity: 0;
+  pointer-events: none;
+  white-space: nowrap;
+  transition: opacity 200ms var(--ease-soft);
+}
+#chapter1 .toast.show {
+  opacity: 1;
+}
+#chapter1 .waveform {
+  margin-top: 48px;
+  width: min(720px, 92vw);
+  height: 80px;
+}
+#chapter1 .energy-bar {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(480px, 80vw);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0.55;
+}
+#chapter1 .energy-bar .label {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--shadow);
+  text-transform: uppercase;
+}
+#chapter1 .energy-bar .track {
+  width: 100%;
+  height: 1px;
+  background: var(--cyan-fade);
+  position: relative;
+  overflow: hidden;
+}
+#chapter1 .energy-bar .fill {
+  position: absolute;
+  inset: 0;
+  background: var(--cyan-signal);
+  transform-origin: left;
+  transform: scaleX(1);
+  transition: transform 200ms linear, background 400ms ease;
+}
+#chapter1 .energy-bar.urgent .fill {
+  background: var(--rust-warn);
+}
+#chapter1 .egg {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 6, 10, 0.78);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 600ms ease;
+}
+#chapter1 .egg.show {
+  opacity: 1;
+}
+#chapter1 .egg-line {
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 500;
+  font-size: clamp(28px, 5vw, 42px);
+  letter-spacing: 0.4em;
+  color: var(--bone);
+}
+#chapter1 .egg-line .glyph {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 240ms var(--ease-soft), transform 240ms var(--ease-soft);
+  margin: 0 0.12em;
+}
+#chapter1 .egg-line .glyph.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+#chapter1 .egg-poem {
+  margin-top: 28px;
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: clamp(13px, 1.5vw, 16px);
+  letter-spacing: 0.25em;
+  color: var(--cyan-fade);
+  opacity: 0;
+  transition: opacity 1200ms ease 800ms;
+}
+#chapter1 .egg-poem.in {
+  opacity: 1;
+}
+
+/* ====== 第二章 ====== */
+#chapter2 .starmap {
+  width: min(800px, 95vw);
+  height: min(600px, 70vh);
+  cursor: crosshair;
+  position: relative;
+}
+#chapter2 .ship {
+  fill: var(--bone);
+  stroke: var(--cyan-signal);
+  stroke-width: 0.5;
+  transition: left 700ms var(--ease-soft), top 700ms var(--ease-soft);
+}
+#chapter2 .escape {
+  fill: none;
+  stroke: var(--cyan-signal);
+  stroke-width: 0.5;
+  stroke-dasharray: 4 4;
+  animation: rotate 8s linear infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes rotate {
+  to { transform: rotate(360deg); }
+}
+#chapter2 .scan-ring {
+  fill: none;
+  stroke: var(--rust-warn);
+  stroke-width: 0.5;
+  opacity: 0;
+}
+#chapter2 .scan-ring.active {
+  opacity: 0.7;
+  animation: scanPulse 1.5s ease-out infinite;
+}
+@keyframes scanPulse {
+  0% { opacity: 0; transform: scale(0.6); }
+  50% { opacity: 0.7; }
+  100% { opacity: 0; transform: scale(1); }
+}
+#chapter2 .gravity-body {
+  fill: var(--ink-deep);
+  stroke: var(--cyan-fade);
+  stroke-width: 0.5;
+}
+#chapter2 .gravity-aura {
+  fill: none;
+  stroke: var(--cyan-fade);
+  stroke-width: 0.3;
+  opacity: 0.4;
+}
+#chapter2 .controls {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+#chapter2 .detect-btn {
+  padding: 12px 18px;
+  border: 0.5px solid var(--cyan-fade);
+  color: var(--cyan-signal);
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  min-width: 120px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: border-color 240ms var(--ease-soft);
+}
+#chapter2 .detect-btn:hover:not(:disabled),
+#chapter2 .detect-btn:focus-visible:not(:disabled) {
+  border-color: var(--cyan-signal);
+}
+#chapter2 .detect-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+#chapter2 .detect-btn .count {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', Consolas, 'Microsoft YaHei Mono', monospace;
+  color: var(--bone);
+  font-size: 11px;
+}
+#chapter2 .warnings {
+  font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', Consolas, 'Microsoft YaHei Mono', monospace;
+  font-size: 11px;
+  color: var(--rust-warn);
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+}
+#chapter2 .warning-flash {
+  position: absolute;
+  inset: 0;
+  background: var(--rust-warn);
+  opacity: 0;
+  pointer-events: none;
+}
+#chapter2 .warning-flash.show {
+  animation: flash 300ms ease;
+}
+@keyframes flash {
+  0% { opacity: 0.4; }
+  100% { opacity: 0; }
+}
+
+/* ====== 第三章 ====== */
+#chapter3 .solar-field {
+  position: relative;
+  width: min(800px, 95vw);
+  height: min(600px, 70vh);
+  transform-origin: center;
+  transition: transform 1.8s var(--ease-soft), filter 1.8s ease;
+}
+#chapter3 .solar-field.collapsing {
+  transform: scaleY(0.02);
+  filter: brightness(0.4);
+}
+#chapter3 .orbit {
+  fill: none;
+  stroke: var(--cyan-fade);
+  stroke-width: 0.3;
+  opacity: 0.4;
+}
+#chapter3 .planet {
+  fill: var(--ink-deep);
+  stroke: var(--cyan-fade);
+  stroke-width: 0.5;
+}
+#chapter3 .star {
+  fill: var(--bone);
+  filter: drop-shadow(0 0 4px var(--bone));
+  animation: starPulse 3s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes starPulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+#chapter3 .fragment {
+  cursor: pointer;
+}
+#chapter3 .fragment .core {
+  fill: var(--cyan-signal);
+  transition: r 180ms var(--ease-soft), opacity 240ms ease;
+}
+#chapter3 .fragment .halo {
+  fill: none;
+  stroke: var(--cyan-signal);
+  stroke-width: 0.3;
+  opacity: 0.4;
+  animation: pulse 2s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.2; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.3); }
+}
+#chapter3 .fragment.collected .core {
+  opacity: 0;
+}
+#chapter3 .fragment.collected .halo {
+  opacity: 0;
+}
+#chapter3 .ship-final {
+  fill: var(--bone);
+  stroke: var(--cyan-signal);
+  stroke-width: 0.5;
+  cursor: pointer;
+  transition: filter 240ms ease;
+}
+#chapter3 .ship-final:not(.ready) {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+#chapter3 .ship-final.ready {
+  filter: drop-shadow(0 0 8px var(--cyan-signal));
+}
+#chapter3 .collapse-bar {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#chapter3 .collapse-bar .label {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--shadow);
+  text-transform: uppercase;
+}
+#chapter3 .collapse-bar .track {
+  width: 100%;
+  height: 1px;
+  background: var(--cyan-fade);
+  position: relative;
+  overflow: hidden;
+}
+#chapter3 .collapse-bar .fill {
+  position: absolute;
+  inset: 0;
+  background: var(--cyan-signal);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 200ms linear, background 400ms ease;
+}
+#chapter3 .collapse-bar .fill.urgent {
+  background: var(--rust-warn);
+}
+#chapter3 .fragment-count {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', Consolas, 'Microsoft YaHei Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  color: var(--cyan-fade);
+}
+
+/* ====== 通用：HintToast ====== */
+.hint-toast {
+  position: absolute;
+  bottom: 120px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  color: var(--cyan-signal);
+  background: rgba(5, 6, 10, 0.6);
+  padding: 12px 24px;
+  border: 0.5px solid var(--cyan-fade);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 240ms var(--ease-soft);
+  white-space: nowrap;
+}
+.hint-toast.show {
+  opacity: 1;
+}
+
+/* ====== 结局 ====== */
+#ending .quote {
+  font-family: 'Cormorant Garamond', 'Songti SC', 'STSong', 'SimSun', 'Noto Serif CJK SC', serif;
+  font-weight: 300;
+  font-size: clamp(14px, 1.6vw, 18px);
+  letter-spacing: 0.35em;
+  color: var(--bone);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1400ms ease, transform 1400ms ease;
+  text-align: center;
+  padding: 0 24px;
+  max-width: 720px;
+}
+#ending .quote.in {
+  opacity: 0.85;
+  transform: translateY(0);
+}
+#ending .score-badge {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 1000ms ease 600ms, transform 1000ms ease 600ms;
+}
+#ending .score-badge.in {
+  opacity: 0.6;
+  transform: translateY(0);
+}
+#ending .score-row {
+  display: flex;
+  gap: 24px;
+  font-family: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', Consolas, 'Microsoft YaHei Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--cyan-fade);
+}
+#ending .score-row .score-value {
+  color: var(--bone);
+}
+#ending .restart-wrap {
+  position: absolute;
+  bottom: 60px;
+  color: var(--cyan-signal);
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  padding: 12px 24px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  opacity: 0;
+  animation: fadeUp 600ms var(--ease-soft) 1200ms forwards;
+}
+#ending .restart-wrap::before,
+#ending .restart-wrap::after {
+  content: '';
+  display: block;
+  width: 14px;
+  height: 1px;
+  background: var(--cyan-signal);
+  transition: width 240ms var(--ease-soft);
+}
+#ending .restart-wrap:hover::before,
+#ending .restart-wrap:hover::after {
+  width: 22px;
+}
+@keyframes fadeUp {
+  to { opacity: 1; }
+}
+
+/* ====== 提示气泡（引力弹弓） ====== */
+.swing-bubble {
+  position: absolute;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 12px;
+  letter-spacing: 0.25em;
+  color: var(--cyan-signal);
+  background: rgba(5, 6, 10, 0.7);
+  padding: 8px 16px;
+  border: 0.5px solid var(--cyan-fade);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 320ms var(--ease-soft), transform 320ms var(--ease-soft);
+  white-space: nowrap;
+}
+.swing-bubble.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ====== 难度分层视觉提示 ====== */
+.scene.tier-2 .bg-stars {
+  opacity: 0.7;
+}
+.scene.tier-3 .bg-stars {
+  opacity: 0.85;
+  filter: brightness(0.95);
+}
+
+/* 噪声饱和（疲劳）— 第一章 */
+#chapter1.fatigued {
+  animation: fatigueShake 400ms ease;
+}
+#chapter1.fatigued .waveform path {
+  stroke: var(--rust-warn);
+}
+@keyframes fatigueShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-2px, 1px); }
+  75% { transform: translate(2px, -1px); }
+}
+
+/* 疲劳 — 第二章 */
+#chapter2.fatigued::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, transparent 30%, rgba(5, 6, 10, 0.5) 100%);
+  pointer-events: none;
+  animation: vignette 800ms ease;
+}
+@keyframes vignette {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 假逃逸点 */
+#chapter2 .escape.decoy {
+  stroke: var(--shadow);
+  stroke-dasharray: 3 6;
+  opacity: 0.4;
+  animation: rotate 12s linear infinite;
+}
+#chapter2 .decoy-escape:hover .escape.decoy {
+  opacity: 0.6;
+}
+
+/* 假碎片 */
+#chapter3 .fragment.decoy .core {
+  fill: var(--shadow);
+  opacity: 0.5;
+}
+#chapter3 .fragment.decoy .halo {
+  stroke: var(--shadow);
+  opacity: 0.2;
+  animation: pulse 3s ease-in-out infinite;
+  animation-delay: 0.5s;
+}
+
+/* 随机事件层 */
+#chapter2.event-flare::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 70% 30%, rgba(217, 69, 95, 0.12), transparent 60%);
+  pointer-events: none;
+  animation: eventFade 800ms ease;
+}
+#chapter2.event-nebula::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(127, 212, 232, 0.08), transparent 50%);
+  pointer-events: none;
+  animation: eventFade 800ms ease;
+}
+#chapter2.event-ray::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, transparent 48%, rgba(127, 212, 232, 0.05) 50%, transparent 52%);
+  pointer-events: none;
+  animation: eventFade 800ms ease;
+}
+@keyframes eventFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* 幻影计数提示 */
+#chapter3 .decoy-note {
+  position: absolute;
+  bottom: max(80px, env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  color: var(--shadow);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* 完成次数提示（主菜单） */
+#menu .completion-hint {
+  position: absolute;
+  top: max(80px, env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  opacity: 0;
+  animation: fadeIn 1200ms var(--ease-soft) 1.2s forwards;
+}
+#menu .completion-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--cyan-signal);
+  letter-spacing: 0.1em;
+}
+#menu .completion-label {
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: var(--shadow);
+}
+@keyframes fadeIn {
+  to { opacity: 0.6; }
+}
+
+/* 结局 tier 标签 */
+#ending .tier-label {
+  position: absolute;
+  top: max(32px, env(safe-area-inset-top, 0px));
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.5em;
+  color: var(--cyan-fade);
+  opacity: 0;
+  transition: opacity 800ms ease;
+}
+#ending .tier-label.in {
+  opacity: 0.7;
+}
+.swing-bubble.show {
+  opacity: 1;
+  transform: translateY(0);
+}

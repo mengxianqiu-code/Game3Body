@@ -1,0 +1,82 @@
+:root {
+  --ink-void: #05060a;
+  --ink-deep: #0b1018;
+  --cyan-signal: #7fd4e8;
+  --cyan-fade: #2a5d6a;
+  --bone: #e8e6df;
+  --rust-warn: #d9455f;
+  --shadow: #2a2f3a;
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background: var(--ink-void);
+  color: var(--bone);
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Hiragino Sans GB', system-ui, -apple-system, sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+button:focus {
+  outline: none;
+}
+
+button:focus-visible {
+  outline: 1px solid var(--cyan-signal);
+  outline-offset: 4px;
+}
+
+.scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 800ms ease;
+  pointer-events: none;
+}
+
+.scene.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.bg-stars {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.5;
+  animation: drift 60s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes drift {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(-40px, -20px, 0); }
+}
+
+@font-face {
+  font-display: swap;
+}
