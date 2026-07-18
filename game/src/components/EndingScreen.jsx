@@ -185,10 +185,11 @@ const endingStyles = `
   align-items: center;
   padding: 80px 24px 40px;
   width: 100%;
-  min-height: 100vh;
+  height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  position: relative;
+  position: absolute;
+  inset: 0;
   font-family: 'JetBrains Mono', monospace;
 }
 

@@ -52,7 +52,8 @@ const creditsStyles = `
   position: relative;
   width: 100%;
   height: 100vh;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
