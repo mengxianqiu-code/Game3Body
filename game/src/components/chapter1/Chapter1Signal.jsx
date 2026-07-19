@@ -399,7 +399,7 @@ const chapterStyles = `
 
 .ch1-hud {
   position: absolute;
-  top: 40px;
+  top: max(40px, env(safe-area-inset-top, 0px) + 16px);
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -446,7 +446,7 @@ const chapterStyles = `
 
 .ch1-lede {
   position: absolute;
-  top: 130px;
+  top: max(130px, env(safe-area-inset-top, 0px) + 100px);
   left: 50%;
   transform: translateX(-50%);
   font-size: 11px;
@@ -555,7 +555,7 @@ const chapterStyles = `
 
 .ch1-direction {
   position: absolute;
-  bottom: 60px;
+  bottom: max(60px, env(safe-area-inset-bottom, 0px) + 24px);
   left: 50%;
   transform: translateX(-50%);
   font-family: 'JetBrains Mono', monospace;
@@ -567,8 +567,8 @@ const chapterStyles = `
 
 .ch1-distance {
   position: absolute;
-  bottom: 30px;
-  right: 30px;
+  bottom: max(30px, env(safe-area-inset-bottom, 0px) + 12px);
+  right: max(30px, env(safe-area-inset-right, 0px) + 12px);
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   letter-spacing: 0.2em;
@@ -595,8 +595,8 @@ const chapterStyles = `
 
 .ch1-help {
   position: absolute;
-  top: 40px;
-  right: 30px;
+  top: max(40px, env(safe-area-inset-top, 0px) + 16px);
+  right: max(30px, env(safe-area-inset-right, 0px) + 12px);
   width: 32px;
   height: 32px;
   border-radius: 50%;

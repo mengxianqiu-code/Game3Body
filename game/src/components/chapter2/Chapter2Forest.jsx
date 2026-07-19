@@ -662,7 +662,7 @@ const chapter2Styles = `
 
 .ch2-hud {
   position: absolute;
-  top: 30px;
+  top: max(30px, env(safe-area-inset-top, 0px) + 12px);
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -723,7 +723,7 @@ const chapter2Styles = `
 
 .ch2-keyhint {
   position: absolute;
-  bottom: 30px;
+  bottom: max(30px, env(safe-area-inset-bottom, 0px) + 12px);
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
@@ -773,8 +773,8 @@ const chapter2Styles = `
 
 .ch2-help {
   position: absolute;
-  top: 40px;
-  right: 30px;
+  top: max(40px, env(safe-area-inset-top, 0px) + 16px);
+  right: max(30px, env(safe-area-inset-right, 0px) + 12px);
   width: 32px;
   height: 32px;
   border-radius: 50%;

@@ -52,6 +52,10 @@ const gameOverStyles = `
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  padding-top: max(16px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
 
 .go-text {

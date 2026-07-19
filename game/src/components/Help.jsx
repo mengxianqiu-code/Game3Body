@@ -93,7 +93,7 @@ const helpStyles = `
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 60px 24px 80px;
+  padding: max(60px, env(safe-area-inset-top, 0px) + 40px) max(24px, env(safe-area-inset-right, 0px) + 16px) max(80px, env(safe-area-inset-bottom, 0px) + 60px) max(24px, env(safe-area-inset-left, 0px) + 16px);
   font-family: 'JetBrains Mono', monospace;
   background: rgba(5, 6, 10, 0.94);
   display: flex;
@@ -194,8 +194,8 @@ const helpStyles = `
 
 .help-close {
   position: fixed;
-  top: 30px;
-  left: 30px;
+  top: max(30px, env(safe-area-inset-top, 0px) + 12px);
+  left: max(30px, env(safe-area-inset-left, 0px) + 12px);
   background: transparent;
   border: 1px solid var(--cyan-fade, #2a5d6a);
   color: var(--cyan-fade, #2a5d6a);

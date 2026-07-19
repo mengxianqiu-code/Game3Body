@@ -141,6 +141,10 @@ const storyStyles = `
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding-top: max(16px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
   background: rgba(5, 6, 10, 0.92);
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -263,7 +267,7 @@ const storyStyles = `
 
 .story-skip-hint {
   position: absolute;
-  bottom: 40px;
+  bottom: max(40px, env(safe-area-inset-bottom, 0px) + 16px);
   left: 50%;
   transform: translateX(-50%);
   font-family: 'JetBrains Mono', monospace;

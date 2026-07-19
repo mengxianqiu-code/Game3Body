@@ -183,7 +183,7 @@ const endingStyles = `
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 80px 24px 40px;
+  padding: max(80px, env(safe-area-inset-top, 0px) + 60px) max(24px, env(safe-area-inset-right, 0px) + 16px) max(40px, env(safe-area-inset-bottom, 0px) + 24px) max(24px, env(safe-area-inset-left, 0px) + 16px);
   width: 100%;
   height: 100vh;
   overflow-y: auto;

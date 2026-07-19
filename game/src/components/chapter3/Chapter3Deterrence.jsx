@@ -970,7 +970,7 @@ const ch3MainStyles = `
 
 .ch3-hud {
   position: absolute;
-  top: 30px;
+  top: max(30px, env(safe-area-inset-top, 0px) + 12px);
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
@@ -1147,7 +1147,7 @@ const ch3MainStyles = `
 
 .ch3-hint {
   position: absolute;
-  bottom: 50px;
+  bottom: max(50px, env(safe-area-inset-bottom, 0px) + 20px);
   left: 50%;
   transform: translateX(-50%);
   font-family: 'JetBrains Mono', monospace;
@@ -1254,8 +1254,8 @@ const ch3MainStyles = `
 
 .ch3-help {
   position: absolute;
-  top: 40px;
-  right: 30px;
+  top: max(40px, env(safe-area-inset-top, 0px) + 16px);
+  right: max(30px, env(safe-area-inset-right, 0px) + 12px);
   width: 32px;
   height: 32px;
   border-radius: 50%;

@@ -13,11 +13,44 @@ svg {
   user-select: none;
 }
 
-/* 安全区：底部按钮/提示要避开 Home Indicator */
+/* ==================== 全局安全区（刘海 / Home Indicator） ==================== */
+/* 当添加到 iOS 桌面后（standalone + viewport-fit=cover），
+   顶部刘海与底部 Home Indicator 会侵入 webview。
+   所有 scene 容器与绝对定位元素都要按 env(safe-area-inset-*) 偏移。 */
+
+/* —— Scene 容器：所有视口都加（iPad 桌面 PWA 也生效）—— */
+#menu,
+#help,
+#settings,
+#credits,
+#story,
+#ending,
+#game-over,
+#chapter1,
+#chapter2,
+#chapter3,
+#chapter4 {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* —— 主菜单 —— */
+#menu .footer-hint {
+  bottom: max(32px, env(safe-area-inset-bottom, 0px) + 12px);
+}
+#menu .completion-hint {
+  top: max(30px, env(safe-area-inset-top, 0px) + 12px);
+  right: max(20px, env(safe-area-inset-right, 0px) + 12px);
+}
+
+/* —— 结局页 —— */
 #ending .restart-wrap {
   bottom: max(60px, env(safe-area-inset-bottom, 0px) + 24px);
 }
 
+/* —— 章节场景 —— */
 #chapter1 .energy-bar {
   bottom: max(40px, env(safe-area-inset-bottom, 0px) + 16px);
 }
@@ -29,11 +62,7 @@ svg {
   top: max(32px, env(safe-area-inset-top, 0px) + 16px);
 }
 
-#menu .footer-hint {
-  bottom: max(32px, env(safe-area-inset-bottom, 0px) + 12px);
-}
-
-/* 触控目标最小 44×44（避免误触） */
+/* —— 触控目标最小 44×44（避免误触） —— */
 button {
   min-height: 36px;
 }
@@ -44,6 +73,25 @@ button {
 /* ==================== 小屏（< 600px） ==================== */
 
 @media (max-width: 600px) {
+  /* ===== Scene 容器：顶部避刘海、底部避 Home Indicator ===== */
+  /* 在小屏上 padding 收敛到 env() 值（无刘海时 = 0px） */
+  #menu,
+  #help,
+  #settings,
+  #credits,
+  #story,
+  #ending,
+  #game-over,
+  #chapter1,
+  #chapter2,
+  #chapter3,
+  #chapter4 {
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
   /* ===== 主菜单 ===== */
   #menu .title {
     font-size: clamp(28px, 9vw, 48px);
@@ -338,8 +386,8 @@ button {
   .help-close,
   .credits-close,
   .settings-close {
-    top: 20px !important;
-    left: 16px !important;
+    top: max(16px, env(safe-area-inset-top, 0px) + 8px) !important;
+    left: max(16px, env(safe-area-inset-left, 0px) + 8px) !important;
     padding: 6px 14px !important;
     font-size: 10px !important;
   }
@@ -386,6 +434,22 @@ button {
 /* ==================== 移动端横屏 ==================== */
 
 @media (max-height: 500px) and (orientation: landscape) {
+  /* 横屏：左右刘海也要避开 */
+  #menu,
+  #help,
+  #settings,
+  #credits,
+  #story,
+  #ending,
+  #game-over,
+  #chapter1,
+  #chapter2,
+  #chapter3,
+  #chapter4 {
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+  }
+
   #menu .title {
     font-size: clamp(24px, 5vh, 40px);
   }
@@ -412,8 +476,8 @@ button {
     height: 75vh;
   }
   #chapter2 .controls {
-    top: 12px;
-    right: 12px;
+    top: max(12px, env(safe-area-inset-top, 0px) + 8px);
+    right: max(12px, env(safe-area-inset-right, 0px) + 8px);
     bottom: auto;
     flex-direction: column;
     transform: none;

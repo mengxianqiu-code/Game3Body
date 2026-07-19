@@ -342,8 +342,8 @@ const chapter4Styles = `
 
 .ch4-hud {
   position: absolute;
-  top: 30px;
-  left: 30px;
+  top: max(30px, env(safe-area-inset-top, 0px) + 12px);
+  left: max(30px, env(safe-area-inset-left, 0px) + 12px);
   z-index: 10;
   font-family: 'JetBrains Mono', 'SF Mono', Consolas, monospace;
   color: var(--bone, #e8e6df);
@@ -423,8 +423,8 @@ const chapter4Styles = `
 
 .ch4-help {
   position: absolute;
-  top: 40px;
-  right: 30px;
+  top: max(40px, env(safe-area-inset-top, 0px) + 16px);
+  right: max(30px, env(safe-area-inset-right, 0px) + 12px);
   width: 32px;
   height: 32px;
   border-radius: 50%;

@@ -346,7 +346,7 @@ const menuStyles = `
 
 .footer-hint {
   position: absolute;
-  bottom: 30px;
+  bottom: max(30px, env(safe-area-inset-bottom, 0px) + 12px);
   font-family: 'JetBrains Mono', monospace;
   font-size: 9px;
   letter-spacing: 0.4em;
@@ -355,8 +355,8 @@ const menuStyles = `
 
 .completion-hint {
   position: absolute;
-  top: 30px;
-  right: 30px;
+  top: max(30px, env(safe-area-inset-top, 0px) + 12px);
+  right: max(30px, env(safe-area-inset-right, 0px) + 12px);
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px;
   letter-spacing: 0.3em;

@@ -81,7 +81,7 @@ const creditsStyles = `
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 24px;
+  padding: max(60px, env(safe-area-inset-top, 0px) + 40px) max(24px, env(safe-area-inset-right, 0px) + 16px) max(60px, env(safe-area-inset-bottom, 0px) + 40px) max(24px, env(safe-area-inset-left, 0px) + 16px);
   font-family: 'JetBrains Mono', monospace;
   background: rgba(5, 6, 10, 0.94);
 }
@@ -190,8 +190,8 @@ const creditsStyles = `
 
 .credits-close {
   position: absolute;
-  top: 30px;
-  left: 30px;
+  top: max(30px, env(safe-area-inset-top, 0px) + 12px);
+  left: max(30px, env(safe-area-inset-left, 0px) + 12px);
   background: transparent;
   border: 1px solid var(--cyan-fade, #2a5d6a);
   color: var(--cyan-fade, #2a5d6a);
