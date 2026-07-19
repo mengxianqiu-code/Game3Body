@@ -38,6 +38,29 @@ export function Credits({ onClose }) {
         <div className="credits-epigraph-from">— 刘 慈 欣 · 《 三 体 · 死 神 永 生 》</div>
       </div>
 
+      <div className="credits-line" />
+
+      <div className="credits-disclaimer">
+        <div className="credits-disclaimer-title">版 权 与 致 敬 声 明</div>
+        <div className="credits-disclaimer-body">
+          本 作 品 为 个 人 非 商 业 学 习 项 目 ，
+          仅 作 为 对 刘 慈 欣 先 生《 三 体 》三 部 曲 的 致 敬 之 作 。
+          游 戏 中 涉 及 的 世 界 观 、 人 物 姓 名 、 概 念 与 名 词
+          （ 如 面 壁 计 划 、 执 剑 人 、 掩 体 纪 元 、 曲 率 引 擎 、 二 向 箔 等 ）
+          均 来 源 于 原 著 ， 所 有 相 关 知 识 产 权 归 原 作 者 刘 慈 欣
+          及 出 版 方 重 庆 出 版 集 团 · 科 幻 图 书 品 牌 所 有 。
+        </div>
+        <div className="credits-disclaimer-body">
+          本 项 目 未 复 制 、 改 编 或 商 业 化 利 用 原 著 任 何 正 文 段 落 ，
+          全 部 对 话 与 文 案 均 为 独 立 创 作 ， 故 事 演 绎 属 于 二 次 创 作 性 解 读 。
+          如 本 作 品 不 当 使 用 涉 及 侵 权 ，
+          项 目 作 者 将 在 收 到 通 知 后 第 一 时 间 删 除 相 关 内 容 。
+        </div>
+        <div className="credits-disclaimer-support">
+          支 持 原 作 · 推 荐 购 买 正 版《 三 体 》三 部 曲
+        </div>
+      </div>
+
       <button className="credits-close" onClick={onClose}>
         ← 返 回 主 菜 单
       </button>
@@ -127,6 +150,42 @@ const creditsStyles = `
   font-size: 10px;
   letter-spacing: 0.3em;
   color: var(--shadow, #555);
+}
+
+.credits-disclaimer {
+  margin-top: 20px;
+  max-width: 520px;
+  padding: 18px 22px;
+  border: 1px solid rgba(127, 212, 232, 0.12);
+  background: rgba(127, 212, 232, 0.03);
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+}
+.credits-disclaimer-title {
+  font-size: 11px;
+  letter-spacing: 0.4em;
+  color: var(--cyan-fade, #2a5d6a);
+  margin-bottom: 12px;
+  text-align: center;
+}
+.credits-disclaimer-body {
+  font-size: 10.5px;
+  line-height: 1.9;
+  letter-spacing: 0.12em;
+  color: rgba(232, 230, 223, 0.55);
+  margin-bottom: 10px;
+  text-indent: 2em;
+}
+.credits-disclaimer-support {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(127, 212, 232, 0.15);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  color: rgba(127, 212, 232, 0.7);
+  text-align: center;
+  font-family: 'Cormorant Garamond', 'Songti SC', serif;
+  font-style: italic;
 }
 
 .credits-close {

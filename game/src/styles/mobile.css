@@ -300,6 +300,23 @@ button {
   .credits-epigraph-text {
     font-size: 12px !important;
   }
+  .credits-disclaimer {
+    max-width: 100%;
+    padding: 14px 16px !important;
+  }
+  .credits-disclaimer-title {
+    font-size: 10px !important;
+    letter-spacing: 0.3em !important;
+  }
+  .credits-disclaimer-body {
+    font-size: 9.5px !important;
+    line-height: 1.8 !important;
+    letter-spacing: 0.08em !important;
+  }
+  .credits-disclaimer-support {
+    font-size: 9px !important;
+    letter-spacing: 0.25em !important;
+  }
 
   .settings-scene {
     padding: 50px 16px !important;
