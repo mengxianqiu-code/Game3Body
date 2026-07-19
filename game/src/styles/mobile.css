@@ -33,10 +33,18 @@ svg {
   bottom: max(32px, env(safe-area-inset-bottom, 0px) + 12px);
 }
 
+/* 触控目标最小 44×44（避免误触） */
+button {
+  min-height: 36px;
+}
+@media (pointer: coarse) {
+  button { min-height: 44px; }
+}
+
 /* ==================== 小屏（< 600px） ==================== */
 
 @media (max-width: 600px) {
-  /* 主菜单字号 */
+  /* ===== 主菜单 ===== */
   #menu .title {
     font-size: clamp(28px, 9vw, 48px);
     letter-spacing: 0.6em;
@@ -47,12 +55,90 @@ svg {
     letter-spacing: 0.35em;
   }
   #menu .start-wrap {
-    margin-top: 48px;
+    margin-top: 32px;
     font-size: 13px;
     letter-spacing: 0.25em;
+    padding: 12px 32px;
   }
 
-  /* 第一章：把能量条移到上方，腾出底部空间 */
+  /* 最高分 + ETO 进度：竖排更易读 */
+  .menu-stats {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 18px;
+    padding: 8px 14px;
+  }
+  .menu-stat {
+    gap: 6px;
+  }
+  .menu-stat-label {
+    font-size: 8px;
+    letter-spacing: 0.25em;
+  }
+  .menu-stat-value {
+    font-size: 12px;
+  }
+
+  /* 章节预览：2x2 网格 */
+  .menu-chapters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 12px;
+    width: min(320px, 88vw);
+  }
+  .menu-chapter-item {
+    padding: 6px 8px;
+  }
+  .menu-chapter-title {
+    font-size: 10px;
+  }
+
+  /* 难度按钮更紧凑 */
+  .menu-difficulty-btn {
+    padding: 10px 14px;
+    font-size: 11px;
+  }
+
+  /* 局外导航按钮：图标更大，更易点 */
+  .menu-nav {
+    gap: 8px;
+  }
+  .menu-nav-btn {
+    min-width: 64px;
+    padding: 10px 12px;
+    min-height: 44px;
+  }
+  .menu-nav-icon {
+    font-size: 16px;
+  }
+  .menu-nav-label {
+    font-size: 9px;
+  }
+
+  /* ===== 章节过场 ===== */
+  .story-title {
+    font-size: 32px !important;
+    letter-spacing: 0.3em !important;
+  }
+  .story-subtitle {
+    font-size: 10px !important;
+  }
+  .story-lines {
+    font-size: 15px !important;
+    line-height: 2 !important;
+    padding: 0 20px;
+  }
+  .story-choice-btn {
+    padding: 12px 18px !important;
+    font-size: 12px !important;
+  }
+  .story-skip-hint {
+    font-size: 10px !important;
+    bottom: 24px;
+  }
+
+  /* ===== 第一章 ===== */
   #chapter1 {
     justify-content: flex-start;
     padding-top: max(24px, env(safe-area-inset-top, 0px));
@@ -76,7 +162,7 @@ svg {
     opacity: 0.45;
   }
 
-  /* 第二章：星图自适应，控制项居中放底部 */
+  /* ===== 第二章 ===== */
   #chapter2 .starmap {
     width: 95vw;
     height: 55vh;
@@ -101,7 +187,7 @@ svg {
     font-size: 11px;
   }
 
-  /* 第三章：太阳能场压扁适应竖屏 */
+  /* ===== 第三章 ===== */
   #chapter3 .solar-field {
     width: 95vw;
     height: 60vh;
@@ -117,15 +203,53 @@ svg {
   #chapter3 .fragment-count {
     font-size: 10px;
   }
-  /* 碎片在小屏略放大 */
   #chapter3 .fragment .core {
     r: 6;
   }
   #chapter3 .fragment .halo {
     r: 16;
   }
+  /* 第三章控件：竖排占满宽度 */
+  #chapter3 .ch3-controls {
+    flex-direction: column;
+    gap: 12px;
+    width: min(320px, 88vw);
+  }
+  #chapter3 .ch3-btn {
+    min-width: 100%;
+    padding: 14px 24px;
+    font-size: 16px;
+    min-height: 50px;
+  }
+  #chapter3 .ch3-hud {
+    min-width: 280px;
+  }
+  #chapter3 .ch3-deterrence-track {
+    width: 140px;
+  }
 
-  /* 结局 */
+  /* ===== 第四章 ===== */
+  #chapter4 .ch4-hud {
+    min-width: 200px;
+    font-size: 10px;
+  }
+  #chapter4 .ch4-progress-bar {
+    width: 180px;
+  }
+  #chapter4 .ch4-help {
+    width: 40px;
+    height: 40px;
+    top: 30px;
+    right: 16px;
+    font-size: 16px;
+  }
+  #chapter4 .ch4-victory-line {
+    font-size: 16px !important;
+    letter-spacing: 0.25em !important;
+    line-height: 1.8 !important;
+  }
+
+  /* ===== 结局 ===== */
   #ending .quote {
     font-size: 13px;
     letter-spacing: 0.25em;
@@ -137,6 +261,82 @@ svg {
   #ending .score-row {
     font-size: 10px;
     gap: 16px;
+  }
+  /* 评分单格宽度（EndingScreen） */
+  .ending-rating-tier {
+    font-size: 60px !important;
+  }
+  .ending-title {
+    font-size: 28px !important;
+  }
+  .eto-clues-title {
+    font-size: 10px !important;
+  }
+
+  /* ===== 局外页面 ===== */
+  .help-scene {
+    padding: 60px 16px 60px !important;
+  }
+  .help-title {
+    font-size: 24px !important;
+    letter-spacing: 0.4em !important;
+  }
+  .help-card {
+    padding: 14px 16px !important;
+  }
+  .help-card-title {
+    font-size: 15px !important;
+  }
+  .help-rules {
+    font-size: 9px !important;
+  }
+
+  .credits-scene {
+    padding: 50px 16px !important;
+  }
+  .credits-title {
+    font-size: 28px !important;
+  }
+  .credits-epigraph-text {
+    font-size: 12px !important;
+  }
+
+  .settings-scene {
+    padding: 50px 16px !important;
+  }
+  .settings-title {
+    font-size: 28px !important;
+  }
+  .settings-row {
+    padding: 12px 14px !important;
+  }
+  .settings-toggle {
+    width: 48px;
+    height: 24px;
+  }
+  .settings-toggle.on .settings-toggle-knob {
+    left: 26px;
+  }
+
+  .help-close,
+  .credits-close,
+  .settings-close {
+    top: 20px !important;
+    left: 16px !important;
+    padding: 6px 14px !important;
+    font-size: 10px !important;
+  }
+
+  /* ===== 失败页 ===== */
+  #game-over .go-text {
+    font-size: 26px !important;
+  }
+  #game-over .go-reason {
+    font-size: 12px !important;
+  }
+  #game-over .go-restart {
+    padding: 12px 28px !important;
+    font-size: 11px !important;
   }
 }
 
@@ -160,12 +360,15 @@ svg {
   #chapter3 .solar-field {
     height: 55vh;
   }
+  .menu-stats {
+    gap: 6px 12px;
+    padding: 6px 10px;
+  }
 }
 
 /* ==================== 移动端横屏 ==================== */
 
 @media (max-height: 500px) and (orientation: landscape) {
-  /* 横屏：紧凑布局 */
   #menu .title {
     font-size: clamp(24px, 5vh, 40px);
   }
@@ -204,6 +407,13 @@ svg {
   #chapter3 .lede {
     margin-bottom: 8px;
   }
+  #chapter3 .ch3-controls {
+    flex-direction: row;
+    gap: 16px;
+  }
+  #chapter3 .ch3-btn {
+    min-width: 140px;
+  }
 }
 
 /* ==================== 性能：transform 提示 ==================== */
@@ -214,7 +424,6 @@ svg {
   will-change: transform;
 }
 
-/* 减少重绘：动画元素独立合成层 */
 #chapter1 .toast,
 #chapter2 .warning-flash,
 #chapter2 .scan-ring,
