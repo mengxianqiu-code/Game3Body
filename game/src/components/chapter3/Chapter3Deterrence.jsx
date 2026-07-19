@@ -248,7 +248,7 @@ function InfoSwatch({ info }) {
   );
 }
 
-/* ============== 图形示例（标准卡片内嵌） ============== */
+/* ============== 图形示例（单图） ============== */
 function regularHex(r) {
   const pts = [];
   for (let i = 0; i < 6; i++) {
@@ -270,79 +270,66 @@ function irregularHex(r) {
   return pts.join(' ');
 }
 
-function MiniExample({ criterion }) {
+/**
+ * 单个示例图形：根据 which（threat/fake）渲染对应极性下的视觉特征。
+ * 用更大 viewBox（-25..25）+ 居中定位，方便嵌入卡片中。
+ */
+function MiniShape({ criterion, which }) {
   const k = criterion.key;
-  const threatVal = anomalyValueFor(criterion); // 当前极性下的"异常值"
-  const fakeVal = normalValueFor(criterion);
+  const val = which === 'threat' ? anomalyValueFor(criterion) : normalValueFor(criterion);
 
-  // 单个图：返回 SVG g（圆形 viewBox -20..20，中心 0,0）
-  const renderOne = (which, x) => {
-    const isThreat = which === 'threat';
-    const val = isThreat ? threatVal : fakeVal;
+  let size = 11;
+  let fill = COLORS.cyan;
+  let opacity = 0.95;
+  let pts = regularHex(size);
+  let animated = false;
+  let offsetX = 0;
 
-    let size = 10;
-    let fill = COLORS.cyan;
-    let opacity = 0.95;
-    let pts = regularHex(size);
-    let animated = false;
-    let offsetX = 0;
+  // 根据 which 给边框一个明确的语义色：真=红，假=青
+  const sideStroke = which === 'threat' ? '#d9455f' : COLORS.cyan;
 
-    switch (k) {
-      case 'color':
-        fill = val === 'dim' ? '#4a3030' : COLORS.cyan;
-        opacity = val === 'dim' ? 0.55 : 0.95;
-        break;
-      case 'shape':
-        pts = val === 'irregular' ? irregularHex(size) : regularHex(size);
-        break;
-      case 'motion':
-        if (val === 'chaotic') animated = true;
-        break;
-      case 'size':
-        size = val === 'anomaly' ? 14 : 10;
-        pts = regularHex(size);
-        break;
-      case 'position':
-        if (val === 'edge') offsetX = 8;
-        break;
-      default:
-        break;
-    }
+  switch (k) {
+    case 'color':
+      fill = val === 'dim' ? '#4a3030' : COLORS.cyan;
+      opacity = val === 'dim' ? 0.55 : 0.95;
+      break;
+    case 'shape':
+      pts = val === 'irregular' ? irregularHex(size) : regularHex(size);
+      break;
+    case 'motion':
+      if (val === 'chaotic') animated = true;
+      break;
+    case 'size':
+      size = val === 'anomaly' ? 16 : 11;
+      pts = regularHex(size);
+      break;
+    case 'position':
+      if (val === 'edge') offsetX = 9;
+      break;
+    default:
+      break;
+  }
 
-    return (
-      <g transform={`translate(${x + offsetX}, 20)`}>
+  return (
+    <svg viewBox="-25 -22 50 44" width="56" height="50" className={`ch3-mini-shape ch3-mini-${which}`}>
+      <g transform={`translate(${offsetX}, 0)`}>
         <polygon
           points={pts}
           fill={fill}
           opacity={opacity}
-          stroke={fill === COLORS.cyan ? COLORS.cyan : '#8a3a3a'}
-          strokeWidth={fill === COLORS.cyan ? 0.5 : 1}
+          stroke={sideStroke}
+          strokeWidth="1"
         />
         {animated && (
           <animateTransform
             attributeName="transform"
             type="rotate"
-            values="0;360"
-            dur="0.8s"
+            values="0;360;-360;180"
+            dur="1.2s"
             repeatCount="indefinite"
           />
         )}
       </g>
-    );
-  };
-
-  return (
-    <svg viewBox="0 0 100 50" width="120" height="60" className="ch3-criterion-example">
-      {/* 左：假危险 */}
-      {renderOne('fake', 20)}
-      {/* 中间分割线 */}
-      <line x1="50" y1="4" x2="50" y2="36" stroke="var(--shadow, #555)" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
-      {/* 右：真危险 */}
-      {renderOne('threat', 80)}
-      {/* 左下：假危险标签 */}
-      <text x="20" y="48" textAnchor="middle" fill="var(--cyan-signal, #7fd4e8)" fontSize="8" letterSpacing="0.2em">假</text>
-      {/* 右下：真危险标签 */}
-      <text x="80" y="48" textAnchor="middle" fill="var(--rust-warn, #d9455f)" fontSize="8" letterSpacing="0.2em" fontWeight="bold">真</text>
     </svg>
   );
 }
@@ -603,19 +590,22 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
           <div className="ch3-criteria-intro">本 轮 规 则</div>
           <div className="ch3-criteria-list">
             {criteria.map((c, i) => (
-              <div key={c.key} className="ch3-criterion" style={{ animationDelay: `${i * 0.2}s` }}>
-                <div className="ch3-criterion-num">{['一', '二', '三'][i]}</div>
-                <div className="ch3-criterion-text">{c.title}</div>
-                <MiniExample criterion={c} />
-                <div className="ch3-criterion-rule">
-                  <span className="rule-threat-tag">真 危 险</span>
-                  <span className="rule-arrow">＝</span>
-                  <span className="rule-threat-val">{describeThreat(c)}</span>
+              <div key={c.key} className="ch3-criterion" style={{ animationDelay: `${i * 0.15}s` }}>
+                <div className="ch3-criterion-head">
+                  <span className="ch3-criterion-num">标 准 {['一', '二', '三'][i]}</span>
+                  <span className="ch3-criterion-text">{c.title}</span>
                 </div>
-                <div className="ch3-criterion-rule">
-                  <span className="rule-fake-tag">假 危 险</span>
-                  <span className="rule-arrow">＝</span>
-                  <span className="rule-fake-val">{describeFake(c)}</span>
+                <div className="ch3-criterion-grid">
+                  <div className="ch3-side ch3-side-fake">
+                    <div className="ch3-side-tag">假 危 险</div>
+                    <MiniShape criterion={c} which="fake" />
+                    <div className="ch3-side-rule">＝ {describeFake(c)}</div>
+                  </div>
+                  <div className="ch3-side ch3-side-threat">
+                    <div className="ch3-side-tag">真 危 险</div>
+                    <MiniShape criterion={c} which="threat" />
+                    <div className="ch3-side-rule">＝ {describeThreat(c)}</div>
+                  </div>
                 </div>
               </div>
             ))}
@@ -700,12 +690,22 @@ export function Chapter3Deterrence({ difficulty = 'normal', onComplete }) {
           <div className="ch3-paused-criteria">
             {criteria.map((c, i) => (
               <div key={c.key} className="ch3-paused-criterion">
-                <span className="ch3-paused-num">{['一', '二', '三'][i]}</span>
-                <span className="ch3-paused-text">{c.title}</span>
-                <span className="ch3-paused-rule">
-                  <span className="ch3-paused-threat">真 ＝ {describeThreat(c)}</span>
-                  <span className="ch3-paused-fake">假 ＝ {describeFake(c)}</span>
-                </span>
+                <div className="ch3-paused-head">
+                  <span className="ch3-paused-num">标 准 {['一', '二', '三'][i]}</span>
+                  <span className="ch3-paused-text">{c.title}</span>
+                </div>
+                <div className="ch3-paused-grid">
+                  <div className="ch3-paused-side ch3-side-fake">
+                    <span className="ch3-side-tag">假 危 险</span>
+                    <MiniShape criterion={c} which="fake" />
+                    <span className="ch3-paused-rule">＝ {describeFake(c)}</span>
+                  </div>
+                  <div className="ch3-paused-side ch3-side-threat">
+                    <span className="ch3-side-tag">真 危 险</span>
+                    <MiniShape criterion={c} which="threat" />
+                    <span className="ch3-paused-rule">＝ {describeThreat(c)}</span>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -760,6 +760,9 @@ const ch3CriteriaStyles = `
   font-family: 'JetBrains Mono', monospace;
   z-index: 10;
   animation: ch3-fade-in 0.5s ease;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 24px;
 }
 
 @keyframes ch3-fade-in {
@@ -778,113 +781,119 @@ const ch3CriteriaStyles = `
   font-size: 12px;
   letter-spacing: 0.3em;
   color: var(--cyan-fade, #2a5d6a);
-  margin-bottom: 50px;
+  margin-bottom: 32px;
 }
 
 .ch3-criteria-intro {
   font-size: 11px;
   letter-spacing: 0.4em;
   color: var(--rust-warn, #d9455f);
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
+/* ====== 三张判断标准卡：上下堆叠，每张更宽 ====== */
 .ch3-criteria-list {
   display: flex;
-  gap: 40px;
+  flex-direction: column;
+  gap: 20px;
   justify-content: center;
-  margin-bottom: 40px;
+  margin-bottom: 32px;
+  width: min(560px, 92vw);
 }
 
 .ch3-criterion {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  padding: 20px 32px;
-  border: 1px solid var(--rust-warn, #d9455f);
+  gap: 14px;
+  padding: 18px 22px;
+  border: 1px solid var(--cyan-fade, #2a5d6a);
+  background: rgba(10, 13, 20, 0.55);
   opacity: 0;
-  animation: ch3-criterion-in 0.6s ease forwards;
+  animation: ch3-criterion-in 0.5s ease forwards;
+}
+
+.ch3-criterion-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed var(--shadow, #555);
 }
 
 .ch3-criterion-num {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--rust-warn, #d9455f);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.3em;
+  flex-shrink: 0;
 }
 
 .ch3-criterion-text {
+  font-family: 'Cormorant Garamond', 'Songti SC', serif;
   font-size: 18px;
-  letter-spacing: 0.4em;
+  letter-spacing: 0.35em;
   color: var(--bone, #e8e6df);
 }
 
-.ch3-criterion-rule {
+/* ====== 每张卡内部的 2 列：左假右真 ====== */
+.ch3-criterion-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ch3-side {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 8px;
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  margin-top: 6px;
+  padding: 14px 8px;
+  border: 1px solid var(--shadow, #555);
+  background: rgba(5, 6, 10, 0.5);
 }
 
-.ch3-criterion-example {
-  display: block;
-  margin: 8px auto;
-}
+.ch3-side-fake { border-color: var(--cyan-fade, #2a5d6a); }
+.ch3-side-threat { border-color: var(--rust-warn, #d9455f); }
 
-.rule-threat-tag,
-.rule-fake-tag {
-  font-size: 9px;
+.ch3-side-tag {
+  font-size: 10px;
   letter-spacing: 0.3em;
-  padding: 2px 8px;
+  padding: 3px 12px;
+  font-weight: bold;
 }
-
-.rule-threat-tag {
-  background: rgba(217, 69, 95, 0.15);
+.ch3-side-fake .ch3-side-tag {
+  color: var(--cyan-signal, #7fd4e8);
+  background: rgba(127, 212, 232, 0.08);
+  border: 1px solid var(--cyan-fade, #2a5d6a);
+}
+.ch3-side-threat .ch3-side-tag {
   color: var(--rust-warn, #d9455f);
+  background: rgba(217, 69, 95, 0.12);
   border: 1px solid var(--rust-warn, #d9455f);
 }
 
-.rule-fake-tag {
-  background: rgba(127, 212, 232, 0.1);
-  color: var(--cyan-signal, #7fd4e8);
-  border: 1px solid var(--cyan-fade, #2a5d6a);
+.ch3-mini-shape {
+  display: block;
 }
 
-.rule-arrow {
-  color: var(--shadow, #555);
+.ch3-side-rule {
   font-size: 12px;
-}
-
-.rule-threat-val {
-  color: var(--rust-warn, #d9455f);
+  letter-spacing: 0.2em;
   font-weight: bold;
-  font-size: 13px;
-  padding: 2px 8px;
-  background: rgba(217, 69, 95, 0.12);
-  border: 1px solid rgba(217, 69, 95, 0.5);
+  text-align: center;
 }
-
-.rule-fake-val {
-  color: var(--cyan-signal, #7fd4e8);
-  font-weight: bold;
-  font-size: 13px;
-  padding: 2px 8px;
-  background: rgba(127, 212, 232, 0.1);
-  border: 1px solid rgba(127, 212, 232, 0.4);
-}
+.ch3-side-fake .ch3-side-rule { color: var(--cyan-signal, #7fd4e8); }
+.ch3-side-threat .ch3-side-rule { color: var(--rust-warn, #d9455f); }
 
 .ch3-criteria-warn {
   font-size: 11px;
   letter-spacing: 0.3em;
   color: var(--shadow, #555);
-  margin-top: 24px;
+  margin-top: 16px;
   text-align: center;
 }
 
 .ch3-start-prompt {
-  margin-top: 32px;
+  margin-top: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1151,13 +1160,15 @@ const ch3MainStyles = `
 .ch3-paused-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(5, 6, 10, 0.85);
+  background: rgba(5, 6, 10, 0.88);
   z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   animation: ch3-paused-in 0.2s ease;
+  padding: 24px;
+  overflow-y: auto;
 }
 @keyframes ch3-paused-in {
   from { opacity: 0; }
@@ -1166,7 +1177,7 @@ const ch3MainStyles = `
 
 .ch3-paused-title {
   font-family: 'Cormorant Garamond', 'Songti SC', serif;
-  font-size: 18px;
+  font-size: 20px;
   letter-spacing: 0.4em;
   color: var(--cyan-signal, #7fd4e8);
   margin-bottom: 24px;
@@ -1176,51 +1187,69 @@ const ch3MainStyles = `
   display: flex;
   flex-direction: column;
   gap: 14px;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
+  width: min(560px, 92vw);
 }
 
 .ch3-paused-criterion {
-  display: grid;
-  grid-template-columns: auto auto 1fr;
-  align-items: center;
-  gap: 16px;
-  padding: 10px 24px;
-  border: 1px solid var(--rust-warn, #d9455f);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 18px;
+  border: 1px solid var(--cyan-fade, #2a5d6a);
   background: rgba(10, 13, 20, 0.6);
-  min-width: 480px;
+}
+
+.ch3-paused-head {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed var(--shadow, #555);
 }
 
 .ch3-paused-num {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--rust-warn, #d9455f);
-  letter-spacing: 0.2em;
+  letter-spacing: 0.3em;
+  flex-shrink: 0;
 }
 .ch3-paused-text {
-  font-size: 14px;
+  font-family: 'Cormorant Garamond', 'Songti SC', serif;
+  font-size: 15px;
   letter-spacing: 0.3em;
   color: var(--bone, #e8e6df);
 }
-.ch3-paused-rule {
+
+.ch3-paused-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.ch3-paused-side {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 6px;
+  border: 1px solid var(--shadow, #555);
 }
-.ch3-paused-threat {
+.ch3-paused-side.ch3-side-fake { border-color: var(--cyan-fade, #2a5d6a); }
+.ch3-paused-side.ch3-side-threat { border-color: var(--rust-warn, #d9455f); }
+
+.ch3-paused-rule {
   font-size: 11px;
   letter-spacing: 0.2em;
-  color: var(--rust-warn, #d9455f);
-}
-.ch3-paused-fake {
-  font-size: 11px;
-  letter-spacing: 0.2em;
-  color: var(--cyan-signal, #7fd4e8);
+  font-weight: bold;
+  text-align: center;
 }
 
 .ch3-paused-hint {
   font-size: 10px;
   letter-spacing: 0.3em;
   color: var(--shadow, #555);
+  margin-top: 8px;
 }
 
 .ch3-help {
