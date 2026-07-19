@@ -167,6 +167,36 @@ export function Chapter2Forest({ difficulty = 'normal', onComplete }) {
     };
   }, [completed]);
 
+  /* ---------- 触摸方向键（手机端） ---------- */
+  // 提供给 D-pad 使用的按下 / 抬起接口。
+  // 内部用一组 activeTouchId 跟踪每一根手指，避免一根手指反复触发同一方向。
+  const activeTouchDirRef = useRef({ up: null, down: null, left: null, right: null });
+
+  function handleDpadDown(dir, pointerId) {
+    if (completed) return;
+    keysRef.current[dir] = true;
+    activeTouchDirRef.current[dir] = pointerId;
+  }
+  function handleDpadUp(dir, pointerId) {
+    // 只有触发"按下"的那根手指抬起时才松开（防误触）
+    if (activeTouchDirRef.current[dir] === pointerId) {
+      keysRef.current[dir] = false;
+      activeTouchDirRef.current[dir] = null;
+    }
+  }
+  function releaseAllDpad() {
+    keysRef.current.up = false;
+    keysRef.current.down = false;
+    keysRef.current.left = false;
+    keysRef.current.right = false;
+    activeTouchDirRef.current = { up: null, down: null, left: null, right: null };
+  }
+
+  // 组件卸载 / 章节完成 → 释放全部方向键（避免飞船在结局页"漂移"）
+  useEffect(() => {
+    return () => releaseAllDpad();
+  }, []);
+
   /* ---------- 主动画循环 ---------- */
   useEffect(() => {
     if (completed) return;
@@ -536,7 +566,70 @@ export function Chapter2Forest({ difficulty = 'normal', onComplete }) {
         <div className="ch2-keyhint-text">或 方 向 键 操 纵 · 引 力 场 内 加 速 · 避 开 扫 描 · 抵 达 逃 逸 点</div>
       </div>
 
+      {/* 触摸方向键（仅触屏可见） */}
+      <Dpad
+        onDown={handleDpadDown}
+        onUp={handleDpadUp}
+      />
+
       <style>{chapter2Styles}</style>
+    </div>
+  );
+}
+
+/* ============== 触摸方向键 D-pad ============== */
+// 用 Pointer Events 同时支持触摸 + 鼠标（桌面调试 / 触屏合一）。
+// 使用 unique pointerId 追踪每一根手指，避免一根手指反复触发。
+function Dpad({ onDown, onUp }) {
+  // 用 ref 跟踪按钮按下状态（用于渲染时高亮）
+  const [active, setActive] = useState({ up: false, down: false, left: false, right: false });
+
+  function makeHandlers(dir) {
+    return {
+      onPointerDown: (e) => {
+        e.preventDefault();
+        e.currentTarget.setPointerCapture(e.pointerId);
+        onDown(dir, e.pointerId);
+        setActive((s) => ({ ...s, [dir]: true }));
+        if (navigator.vibrate) navigator.vibrate(10);
+      },
+      onPointerUp: (e) => {
+        onUp(dir, e.pointerId);
+        setActive((s) => ({ ...s, [dir]: false }));
+      },
+      onPointerCancel: (e) => {
+        onUp(dir, e.pointerId);
+        setActive((s) => ({ ...s, [dir]: false }));
+      },
+      onPointerLeave: (e) => {
+        // 手指拖出按钮也要松开（但用 captured pointer 时基本不会触发，留作兜底）
+        if (e.buttons === 0) {
+          onUp(dir, e.pointerId);
+          setActive((s) => ({ ...s, [dir]: false }));
+        }
+      },
+    };
+  }
+
+  const dirs = ['up', 'left', 'down', 'right'];
+
+  return (
+    <div className="ch2-dpad" aria-label="方向控制">
+      {dirs.map((dir) => {
+        const handlers = makeHandlers(dir);
+        const arrow = { up: '▲', down: '▼', left: '◀', right: '▶' }[dir];
+        return (
+          <button
+            key={dir}
+            type="button"
+            className={`ch2-dpad-btn ch2-dpad-${dir} ${active[dir] ? 'active' : ''}`}
+            aria-label={`方向-${dir}`}
+            {...handlers}
+          >
+            {arrow}
+          </button>
+        );
+      })}
     </div>
   );
 }
@@ -699,5 +792,81 @@ const chapter2Styles = `
   border-color: var(--cyan-signal, #7fd4e8);
   color: var(--cyan-signal, #7fd4e8);
   background: rgba(127, 212, 232, 0.1);
+}
+
+/* ===== 触摸方向键 D-pad ===== */
+/* 默认隐藏（避免桌面误显示）；触屏 / 鼠标无键盘的设备才显示 */
+.ch2-dpad {
+  display: none;
+  position: absolute;
+  bottom: max(24px, env(safe-area-inset-bottom, 0px) + 16px);
+  left: 24px;
+  width: 156px;
+  height: 156px;
+  z-index: 12;
+  grid-template-areas:
+    '.    up    .'
+    'left .     right'
+    '.    down  .';
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 4px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;  /* 阻止浏览器把触摸当成滚动 */
+}
+.ch2-dpad-up    { grid-area: up; }
+.ch2-dpad-left  { grid-area: left; }
+.ch2-dpad-right { grid-area: right; }
+.ch2-dpad-down  { grid-area: down; }
+
+.ch2-dpad-btn {
+  width: 100%;
+  height: 100%;
+  min-height: 44px;     /* 触控目标最小尺寸 */
+  border: 1px solid rgba(127, 212, 232, 0.35);
+  border-radius: 6px;
+  background: rgba(127, 212, 232, 0.08);
+  color: var(--cyan-signal, #7fd4e8);
+  font-size: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.08s ease, transform 0.08s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: none;
+}
+.ch2-dpad-btn.active {
+  background: rgba(127, 212, 232, 0.32);
+  border-color: var(--cyan-signal, #7fd4e8);
+  transform: scale(0.94);
+  box-shadow: 0 0 12px rgba(127, 212, 232, 0.4);
+}
+.ch2-dpad-btn:active {
+  background: rgba(127, 212, 232, 0.32);
+}
+
+/* 触屏设备：显示 D-pad */
+@media (hover: none) and (pointer: coarse) {
+  .ch2-dpad {
+    display: grid;
+  }
+}
+
+/* 小屏：进一步压缩 D-pad，让星图有空间 */
+@media (max-width: 600px) {
+  .ch2-dpad {
+    bottom: max(12px, env(safe-area-inset-bottom, 0px) + 8px);
+    left: 12px;
+    width: 132px;
+    height: 132px;
+  }
+  .ch2-dpad-btn {
+    font-size: 18px;
+  }
 }
 `;
